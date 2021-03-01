@@ -6,6 +6,8 @@ dex:
       bindDN: cn=admin,dc=scott,dc=net
       bindPW: admin
       usernamePrompt: Email Address
+      insecureNoSSL: false
+      insecureSkipVerify: true
       userSearch:
         baseDN: 'ou=people,dc=example,dc=com'
         filter: '(objectClass=person)'
