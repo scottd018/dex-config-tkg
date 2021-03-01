@@ -19,3 +19,7 @@ dex:
         userAttr: DN
         groupAttr: "memberOf"
         nameAttr: cn
+dns:
+  aws:
+    DEX_SVC_LB_HOSTNAME: sample-elb
+    dnsNames: []
