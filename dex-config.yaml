@@ -1,21 +1,18 @@
+dex:
+  config:
     connector: ldap
     ldap:
-      host: ldap:389
-      insecureNoSSL: true
-      bindDN: cn=admin,dc=scott,dc=net
-      bindPW: admin
-      usernamePrompt: Email Address
+      host: ldaps.example.com:636
       userSearch:
-        baseDN: ou=People,dc=scott,dc=net
-        filter: (objectClass=person)
-        username: mail
+        baseDN: 'ou=people,dc=example,dc=com'
+        filter: '(objectClass=person)'
+        username: userPrincipalName
         idAttr: DN
-        emailAttr: mail
-        nameAttr: cn
+        emailAttr: userPrincipalName
+        nameAttr: 'cn'
       groupSearch:
-        baseDN: ou=Groups,dc=scott,dc=net
-        filter: (objectClass=groupOfNames)
-        userMatchers:
-        - userAttr: DN
-        groupAttr: member
+        baseDN: 'ou=group,dc=example,dc=com'
+        filter: '(objectClass=group)'
+        userAttr: DN
+        groupAttr: "memberOf"
         nameAttr: cn
