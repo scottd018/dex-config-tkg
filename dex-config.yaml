@@ -3,6 +3,9 @@ dex:
     connector: ldap
     ldap:
       host: ldaps.example.com:636
+      bindDN: cn=admin,dc=scott,dc=net
+      bindPW: admin
+      usernamePrompt: Email Address
       userSearch:
         baseDN: 'ou=people,dc=example,dc=com'
         filter: '(objectClass=person)'
