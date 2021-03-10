@@ -1,0 +1,42 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+
+# from https://gist.github.com/jessehu/b342a0e3cb25144b13ad516538809d3c#file-01_additional_ca_certs-yaml
+
+#! This ytt overlay adds additional custom CA certificates on TKG cluster nodes, so containerd and other tools trust these CA certificates.
+#! It works when using Photon or Ubuntu as the TKG node template on all TKG infrastructure providers.
+
+#! Trust your custom CA certificates on all Control Plane nodes.
+#@overlay/match by=overlay.subset({"kind":"KubeadmControlPlane"}),expects="0+"
+---
+spec:
+  kubeadmConfigSpec:
+    #@overlay/match missing_ok=True
+    files:
+      #@overlay/append
+      - content: #@ data.read("harbor-cert.pem")
+        owner: root:root
+        permissions: "0644"
+        path: /etc/pki/ca-trust/source/anchors/tkg-custom-ca.pem
+    #@overlay/match missing_ok=True
+    preKubeadmCommands:
+      - "update-ca-trust extract"
+      - "systemctl restart containerd"
+
+#! Trust your custom CA certificates on all worker nodes.
+#@overlay/match by=overlay.subset({"kind":"KubeadmConfigTemplate"}),expects="0+"
+---
+spec:
+  template:
+    spec:
+      #@overlay/match missing_ok=True
+      files:
+        #@overlay/append
+        - content: #@ data.read("harbor-cert.pem")
+          owner: root:root
+          permissions: "0644"
+          path: /etc/pki/ca-trust/source/anchors/tkg-custom-ca.pem
+      #@overlay/match missing_ok=True
+      preKubeadmCommands:
+        - "update-ca-trust extract"
+        - "systemctl restart containerd"
