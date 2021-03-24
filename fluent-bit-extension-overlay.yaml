@@ -1,0 +1,19 @@
+---
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+
+#@overlay/match by=overlay.subset({"kind": "DaemonSet", "metadata": {"name": "fluent-bit"}}),expects="1+"
+---
+spec:
+  template:
+    spec:
+      containers:
+        #@overlay/match by="name",expects="0+"
+        - name: "fluent-bit"
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "128Mi"
+            requests:
+              cpu: "25m"
+              memory: "64Mi"
