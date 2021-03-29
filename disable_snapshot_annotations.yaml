@@ -1,0 +1,30 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+
+#@overlay/match by=overlay.subset({"kind":"KubeadmControlPlane"})
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
+kind: KubeadmControlPlane
+spec:
+  kubeadmConfigSpec:
+    preKubeadmCommands:
+    #@overlay/append
+    - #@ "echo '[plugins.\"io.containerd.grpc.v1.cri\".containerd]' >> /etc/containerd/config.toml"
+    #@overlay/append
+    - echo '  disable_snapshot_annotations = true' >> /etc/containerd/config.toml
+    - systemctl restart containerd
+
+#@overlay/match by=overlay.subset({"kind":"KubeadmConfigTemplate"})
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+kind: KubeadmConfigTemplate
+spec:
+  template:
+    spec:
+      preKubeadmCommands:
+      #@overlay/append
+      - #@ "echo '[plugins.\"io.containerd.grpc.v1.cri\".containerd]' >> /etc/containerd/config.toml"
+      #@overlay/append
+      - echo '  disable_snapshot_annotations = true' >> /etc/containerd/config.toml
+      #@overlay/append
+      - systemctl restart containerd
