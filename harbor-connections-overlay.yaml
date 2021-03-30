@@ -2,7 +2,7 @@
 #@ load("@ytt:overlay", "overlay")
 #@ load("@ytt:data", "data")
 
-#@overlay/match by=overlay.subset({"kind": "ConfigMap", "data": {"CONFIG_PATH": "/etc/core/app.conf"}}),expects="1+"
+#@overlay/match by=overlay.subset({"kind": "ConfigMap", "data": {"CONFIG_PATH": "/etc/core/app.conf"}}),expects="0+"
 ---
 data:
   POSTGRESQL_MAX_IDLE_CONNS: "500"
