@@ -8,9 +8,7 @@ kind: KubeadmControlPlane
 spec:
   kubeadmConfigSpec:
     preKubeadmCommands:
-    #@overlay/append
-    - #@ "echo '[plugins.\"io.containerd.grpc.v1.cri\".containerd]' >> /etc/containerd/config.toml"
-    #@overlay/append
+    - echo '[plugins."io.containerd.grpc.v1.cri".containerd]' >> /etc/containerd/config.toml
     - echo '  disable_snapshot_annotations = true' >> /etc/containerd/config.toml
     - systemctl restart containerd
 
@@ -22,9 +20,6 @@ spec:
   template:
     spec:
       preKubeadmCommands:
-      #@overlay/append
-      - #@ "echo '[plugins.\"io.containerd.grpc.v1.cri\".containerd]' >> /etc/containerd/config.toml"
-      #@overlay/append
+      - echo '[plugins.\"io.containerd.grpc.v1.cri\".containerd]' >> /etc/containerd/config.toml
       - echo '  disable_snapshot_annotations = true' >> /etc/containerd/config.toml
-      #@overlay/append
       - systemctl restart containerd
