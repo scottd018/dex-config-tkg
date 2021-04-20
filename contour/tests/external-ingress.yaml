@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kuard-ingress-internal
+  name: kuard-ingress-internal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kuard-ingress-internal
+  template:
+    metadata:
+      labels:
+        app: kuard-ingress-internal
+    spec:
+      containers:
+      - image: gcr.io/kuar-demo/kuard-amd64:1
+        name: kuard-ingress-internal
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: kuard-ingress-internal
+  name: kuard-ingress-internal
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: kuard-ingress-internal
+  sessionAffinity: None
+  type: ClusterIP
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata: 
+  labels:
+    app: kuard-ingress-internal
+  name: kuard-ingress-internal
+  namespace: default
+spec: 
+  rules:
+  - host: kuard-ingress-internal.local
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: kuard-ingress-internal
+          servicePort: 80

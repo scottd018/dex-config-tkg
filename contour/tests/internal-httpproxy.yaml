@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kuard-httpproxy-internal
+  name: kuard-httpproxy-internal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kuard-httpproxy-internal
+  template:
+    metadata:
+      labels:
+        app: kuard-httpproxy-internal
+    spec:
+      containers:
+      - image: gcr.io/kuar-demo/kuard-amd64:1
+        name: kuard-httpproxy-internal
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: kuard-httpproxy-internal
+  name: kuard-httpproxy-internal
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: kuard-httpproxy-internal
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata: 
+  labels:
+    app: kuard-httpproxy-internal
+  name: kuard-httpproxy-internal
+  namespace: default
+spec: 
+  virtualhost:
+    fqdn: kuard-httpproxy-internal.local
+  routes: 
+    - conditions:
+      - prefix: /
+      services:
+        - name: kuard-httpproxy-internal
+          port: 80

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kuard-httpproxy-external
+  name: kuard-httpproxy-external
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kuard-httpproxy-external
+  template:
+    metadata:
+      labels:
+        app: kuard-httpproxy-external
+    spec:
+      containers:
+      - image: gcr.io/kuar-demo/kuard-amd64:1
+        name: kuard-httpproxy-external
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: kuard-httpproxy-external
+  name: kuard-httpproxy-external
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: kuard-httpproxy-external
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata: 
+  labels:
+    app: kuard-httpproxy-external
+  name: kuard-httpproxy-external
+  namespace: default
+  annotations:
+    projectcontour.io/ingress.class: contour-external
+spec: 
+  virtualhost:
+    fqdn: kuard-httpproxy-external.local
+  routes: 
+    - conditions:
+      - prefix: /
+      services:
+        - name: kuard-httpproxy-external
+          port: 80
