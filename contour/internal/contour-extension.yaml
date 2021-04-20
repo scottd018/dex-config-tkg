@@ -9,7 +9,7 @@ spec:
   description: contour
   version: "v1.8.1_vmware.1"
   name: contour
-  namespace: tanzu-system-ingress
+  namespace: tanzu-system-ingress-internal
   deploymentStrategy:
     type: KUBERNETES_NATIVE
   objects: |
